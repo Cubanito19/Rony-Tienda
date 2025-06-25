@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tienda</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiR2VzdGnDs24gZGUgVGllbmRhIiwic2hvcnRfbmFtZSI6IlRpZW5kYSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjMDA3YmZmIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjNhV1IwYUQwaU1qUWlJR2hsYVdkb2REMGlNalFpSUhabGNuTnBiMjQ5SWpFdU1TSWdlRzFzYm5NOUltaDBkSEE2THk5M2QzY3Vkek11YjNKbkx6SXdNREF2YzNabklqNDhjbVZqZENCM2FXUjBhRDBpTWpRaUlHaGxhV2RvZEQwaU1qUWlJR1pwYkd3OUlpTXdNRGRpWm1ZaUx6NDhMMk4yWno0PSIsInNpemVzIjoiMjR4MjQiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .header .date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9ff, #e3f2fd);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e3f2fd;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .product-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .product-info {
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-details {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            min-width: auto;
+            margin: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 12px;
+            max-width: 350px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .order-item {
+            background: #e3f2fd;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+            z-index: 999;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            z-index: 1001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏪 Gestión de Tienda</h1>
+            <div class="date" id="currentDate"></div>
+        </div>
+
+        <div class="main-content">
+            <!-- Estadísticas del día -->
+            <div class="section">
+                <h2>📊 Estadísticas del Día</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="clientsCount">0</div>
+                        <div class="stat-label">Clientes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSales">$0</div>
+                        <div class="stat-label">Ventas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="productsStock">0</div>
+                        <div class="stat-label">Productos en Stock</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Total Vendidos</div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" onclick="showNewClientModal()">
+                    👤 Nuevo Cliente
+                </button>
+                <button class="btn btn-secondary" onclick="showInventoryModal()">
+                    📦 Gestionar Inventario
+                </button>
+                <button class="btn btn-danger" onclick="finalizeTurn()">
+                    🏁 Finalizar Turno
+                </button>
+                <button class="btn btn-secondary" onclick="showHistoryModal()">
+                    📈 Historial de Ventas
+                </button>
+            </div>
+
+            <!-- Lista de productos -->
+            <div class="section">
+                <h2>📦 Inventario Actual</h2>
+                <div class="product-list" id="productList">
+                    <p style="text-align: center; color: #666;">No hay productos en el inventario</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para nuevo cliente -->
+    <div id="clientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('clientModal')">&times;</span>
+            <h2>👤 Nuevo Cliente</h2>
+            <div id="clientOrder">
+                <p>Productos seleccionados:</p>
+                <div id="orderItems"></div>
+                <div style="margin-top: 15px; font-weight: bold;">
+                    Total: $<span id="orderTotal">0</span>
+                </div>
+            </div>
+            <button class="btn" onclick="selectProduct()">➕ Agregar Producto</button>
+            <button class="btn btn-success" onclick="confirmOrder()">✅ Confirmar Pedido</button>
+        </div>
+    </div>
+
+    <!-- Modal para seleccionar producto -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('productModal')">&times;</span>
+            <h2>📦 Seleccionar Producto</h2>
+            <div class="input-group">
+                <label>Producto:</label>
+                <select id="productSelect">
+                    <option value="">Seleccionar producto...</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Cantidad:</label>
+                <input type="number" id="productQuantity" min="1" value="1">
+            </div>
+            <button class="btn" onclick="addToOrder()">➕ Agregar al Pedido</button>
+        </div>
+    </div>
+
+    <!-- Modal para gestionar inventario -->
+    <div id="inventoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('inventoryModal')">&times;</span>
+            <h2>📦 Gestionar Inventario</h2>
+            
+            <div class="input-group">
+                <label>Nombre del producto:</label>
+                <input type="text" id="newProductName" placeholder="Ej: Coca Cola">
+            </div>
+            <div class="input-group">
+                <label>Precio:</label>
+                <input type="number" id="newProductPrice" min="0" step="0.01" placeholder="0.00">
+            </div>
+            <div class="input-group">
+                <label>Cantidad inicial:</label>
+                <input type="number" id="newProductQuantity" min="0" value="0">
+            </div>
+            <button class="btn" onclick="addProduct()">➕ Agregar Producto</button>
+            
+            <hr style="margin: 20px 0;">
+            
+            <h3>Productos existentes:</h3>
+            <div id="inventoryList" class="product-list" style="max-height: 200px;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para finalizar turno -->
+    <div id="turnModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('turnModal')">&times;</span>
+            <h2>🏁 Resumen del Turno</h2>
+            <div id="turnSummary"></div>
+            <button class="btn btn-success" onclick="saveTurnData()">💾 Guardar y Cerrar Turno</button>
+        </div>
+    </div>
+
+    <!-- Modal para historial de ventas -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('historyModal')">&times;</span>
+            <h2>📈 Historial de Ventas</h2>
+            
+            <div class="input-group">
+                <label>Seleccionar fecha:</label>
+                <select id="dateSelect" onchange="showDayReport()">
+                    <option value="">Seleccionar fecha...</option>
+                </select>
+            </div>
+            
+            <div id="dayReport" class="hidden">
+                <h3>📊 Resumen del Día</h3>
+                <div id="dayReportContent"></div>
+                
+                <h3>👥 Detalle de Clientes</h3>
+                <div id="clientsDetail" class="product-list" style="max-height: 200px;">
+                </div>
+            </div>
+            
+            <hr style="margin: 20px 0;">
+            
+            <h3>📈 Comparativa Rápida</h3>
+            <div id="quickStats">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalDays">0</div>
+                        <div class="stat-label">Días Trabajados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgSales">$0</div>
+                        <div class="stat-label">Promedio Diario</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="bestDay">-</div>
+                        <div class="stat-label">Mejor Día</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalHistoric">$0</div>
+                        <div class="stat-label">Total Histórico</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast para notificaciones -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Estado de la aplicación
+        let products = JSON.parse(localStorage.getItem('products')) || {};
+        let dailyData = JSON.parse(localStorage.getItem('dailyData')) || {};
+        let currentOrder = [];
+        let clients = [];
+
+        // Inicializar aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            initializeDay();
+            updateDisplay();
+            updateStats();
+        });
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('es-ES', options);
+        }
+
+        function initializeDay() {
+            const today = new Date().toDateString();
+            if (!dailyData[today]) {
+                dailyData[today] = {
+                    clients: [],
+                    totalSales: 0,
+                    productsSold: {},
+                    date: today
+                };
+            }
+            clients = dailyData[today].clients || [];
+        }
+
+        function updateDisplay() {
+            updateProductList();
+            updateInventoryList();
+            updateProductSelect();
+        }
+
+        function updateProductList() {
+            const productList = document.getElementById('productList');
+            const productEntries = Object.entries(products);
+            
+            if (productEntries.length === 0) {
+                productList.innerHTML = '<p style="text-align: center; color: #666;">No hay productos en el inventario</p>';
+                return;
+            }
+
+            productList.innerHTML = productEntries.map(([name, product]) => `
+                <div class="product-item">
+                    <div class="product-info">
+                        <div class="product-name">${name}</div>
+                        <div class="product-details">
+                            Stock: ${product.quantity} | Precio: $${product.price.toFixed(2)}
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-small" onclick="adjustStock('${name}', 1)">+</button>
+                        <button class="btn btn-small btn-secondary" onclick="adjustStock('${name}', -1)">-</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateInventoryList() {
+            const inventoryList = document.getElementById('inventoryList');
+            const productEntries = Object.entries(products);
+            
+            if (productEntries.length === 0) {
+                inventoryList.innerHTML = '<p style="text-align: center; color: #666;">No hay productos</p>';
+                return;
+            }
+
+            inventoryList.innerHTML = productEntries.map(([name, product]) => `
+                <div class="product-item">
+                    <div class="product-info">
+                        <div class="product-name">${name}</div>
+                        <div class="product-details">
+                            Stock: ${product.quantity} | $${product.price.toFixed(2)}
+                        </div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-small btn-danger" onclick="deleteProduct('${name}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateProductSelect() {
+            const select = document.getElementById('productSelect');
+            const availableProducts = Object.entries(products).filter(([name, product]) => product.quantity > 0);
+            
+            select.innerHTML = '<option value="">Seleccionar producto...</option>' +
+                availableProducts.map(([name, product]) => 
+                    `<option value="${name}">${name} - Stock: ${product.quantity} - $${product.price.toFixed(2)}</option>`
+                ).join('');
+        }
+
+        function updateStats() {
+            const today = new Date().toDateString();
+            const todayData = dailyData[today] || { clients: [], totalSales: 0 };
+            
+            document.getElementById('clientsCount').textContent = todayData.clients.length;
+            document.getElementById('totalSales').textContent = `$${todayData.totalSales.toFixed(2)}`;
+            
+            const totalStock = Object.values(products).reduce((sum, product) => sum + product.quantity, 0);
+            document.getElementById('productsStock').textContent = totalStock;
+            
+            const totalSold = Object.values(todayData.productsSold || {}).reduce((sum, qty) => sum + qty, 0);
+            document.getElementById('totalProducts').textContent = totalSold;
+        }
+
+        function showNewClientModal() {
+            currentOrder = [];
+            updateOrderDisplay();
+            document.getElementById('clientModal').style.display = 'block';
+        }
+
+        function showInventoryModal() {
+            document.getElementById('inventoryModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function selectProduct() {
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        function addToOrder() {
+            const selectedProduct = document.getElementById('productSelect').value;
+            const quantity = parseInt(document.getElementById('productQuantity').value) || 1;
+            
+            if (!selectedProduct) {
+                showToast('Selecciona un producto');
+                return;
+            }
+
+            if (quantity > products[selectedProduct].quantity) {
+                showToast('No hay suficiente stock');
+                return;
+            }
+
+            const existingItem = currentOrder.find(item => item.name === selectedProduct);
+            if (existingItem) {
+                if (existingItem.quantity + quantity > products[selectedProduct].quantity) {
+                    showToast('No hay suficiente stock');
+                    return;
+                }
+                existingItem.quantity += quantity;
+            } else {
+                currentOrder.push({
+                    name: selectedProduct,
+                    quantity: quantity,
+                    price: products[selectedProduct].price
+                });
+            }
+
+            updateOrderDisplay();
+            closeModal('productModal');
+            document.getElementById('productQuantity').value = 1;
+            showToast('Producto agregado al pedido');
+        }
+
+        function updateOrderDisplay() {
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+            
+            if (currentOrder.length === 0) {
+                orderItems.innerHTML = '<p style="color: #666;">No hay productos seleccionados</p>';
+                orderTotal.textContent = '0';
+                return;
+            }
+
+            orderItems.innerHTML = currentOrder.map((item, index) => `
+                <div class="order-item">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        ${item.quantity} x $${item.price.toFixed(2)}
+                    </div>
+                    <button class="btn btn-small btn-danger" onclick="removeFromOrder(${index})">🗑️</button>
+                </div>
+            `).join('');
+
+            const total = currentOrder.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            orderTotal.textContent = total.toFixed(2);
+        }
+
+        function removeFromOrder(index) {
+            currentOrder.splice(index, 1);
+            updateOrderDisplay();
+            showToast('Producto eliminado del pedido');
+        }
+
+        function confirmOrder() {
+            if (currentOrder.length === 0) {
+                showToast('Agrega productos al pedido');
+                return;
+            }
+
+            // Actualizar stock
+            currentOrder.forEach(item => {
+                products[item.name].quantity -= item.quantity;
+            });
+
+            // Registrar venta
+            const today = new Date().toDateString();
+            const orderTotal = currentOrder.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            
+            if (!dailyData[today]) {
+                dailyData[today] = { clients: [], totalSales: 0, productsSold: {} };
+            }
+
+            dailyData[today].clients.push({
+                timestamp: new Date().toLocaleTimeString(),
+                items: [...currentOrder],
+                total: orderTotal
+            });
+
+            dailyData[today].totalSales += orderTotal;
+
+            // Actualizar productos vendidos
+            currentOrder.forEach(item => {
+                if (!dailyData[today].productsSold[item.name]) {
+                    dailyData[today].productsSold[item.name] = 0;
+                }
+                dailyData[today].productsSold[item.name] += item.quantity;
+            });
+
+            // Guardar datos
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('dailyData', JSON.stringify(dailyData));
+
+            // Actualizar interfaz
+            updateDisplay();
+            updateStats();
+            closeModal('clientModal');
+            
+            showToast(`Pedido registrado: $${orderTotal.toFixed(2)}`);
+            currentOrder = [];
+        }
+
+        function addProduct() {
+            const name = document.getElementById('newProductName').value.trim();
+            const price = parseFloat(document.getElementById('newProductPrice').value) || 0;
+            const quantity = parseInt(document.getElementById('newProductQuantity').value) || 0;
+
+            if (!name) {
+                showToast('Ingresa el nombre del producto');
+                return;
+            }
+
+            if (price <= 0) {
+                showToast('Ingresa un precio válido');
+                return;
+            }
+
+            products[name] = { price, quantity };
+            localStorage.setItem('products', JSON.stringify(products));
+
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductPrice').value = '';
+            document.getElementById('newProductQuantity').value = '0';
+
+            updateDisplay();
+            updateStats();
+            showToast('Producto agregado');
+        }
+
+        function deleteProduct(name) {
+            if (confirm(`¿Eliminar ${name}?`)) {
+                delete products[name];
+                localStorage.setItem('products', JSON.stringify(products));
+                updateDisplay();
+                updateStats();
+                showToast('Producto eliminado');
+            }
+        }
+
+        function adjustStock(name, change) {
+            products[name].quantity = Math.max(0, products[name].quantity + change);
+            localStorage.setItem('products', JSON.stringify(products));
+            updateDisplay();
+            updateStats();
+        }
+
+        function finalizeTurn() {
+            const today = new Date().toDateString();
+            const todayData = dailyData[today] || { clients: [], totalSales: 0, productsSold: {} };
+            
+            const summary = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${todayData.clients.length}</div>
+                        <div class="stat-label">Clientes Atendidos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">$${todayData.totalSales.toFixed(2)}</div>
+                        <div class="stat-label">Total Recaudado</div>
+                    </div>
+                </div>
+                
+                <h3>Productos Vendidos:</h3>
+                <div class="product-list" style="max-height: 150px;">
+                    ${Object.entries(todayData.productsSold || {})
+                        .sort(([,a], [,b]) => b - a)
+                        .map(([name, qty]) => `
+                            <div class="product-item">
+                                <div class="product-info">
+                                    <div class="product-name">${name}</div>
+                                    <div class="product-details">Vendidos: ${qty}</div>
+                                </div>
+                            </div>
+                        `).join('') || '<p>No se vendieron productos</p>'}
+                </div>
+                
+                <h3>Stock Restante:</h3>
+                <div class="product-list" style="max-height: 150px;">
+                    ${Object.entries(products)
+                        .map(([name, product]) => `
+                            <div class="product-item">
+                                <div class="product-info">
+                                    <div class="product-name">${name}</div>
+                                    <div class="product-details">Stock: ${product.quantity}</div>
+                                </div>
+                            </div>
+                        `).join('') || '<p>No hay productos en inventario</p>'}
+                </div>
+            `;
+
+            document.getElementById('turnSummary').innerHTML = summary;
+            document.getElementById('turnModal').style.display = 'block';
+        }
+
+        function saveTurnData() {
+            // Resetear cantidades pero mantener productos y precios
+            Object.keys(products).forEach(name => {
+                products[name].quantity = 0;
+            });
+            
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('dailyData', JSON.stringify(dailyData));
+            
+            closeModal('turnModal');
+            updateDisplay();
+            updateStats();
+            showToast('Turno finalizado y datos guardados');
+        }
+
+        function showHistoryModal() {
+            updateDateSelect();
+            updateQuickStats();
+            document.getElementById('historyModal').style.display = 'block';
+        }
+
+        function updateDateSelect() {
+            const dateSelect = document.getElementById('dateSelect');
+            const dates = Object.keys(dailyData).sort((a, b) => new Date(b) - new Date(a));
+            
+            dateSelect.innerHTML = '<option value="">Seleccionar fecha...</option>' +
+                dates.map(date => {
+                    const dateObj = new Date(date);
+                    const formatted = dateObj.toLocaleDateString('es-ES', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                    return `<option value="${date}">${formatted}</option>`;
+                }).join('');
+        }
+
+        function showDayReport() {
+            const selectedDate = document.getElementById('dateSelect').value;
+            const dayReport = document.getElementById('dayReport');
+            
+            if (!selectedDate || !dailyData[selectedDate]) {
+                dayReport.classList.add('hidden');
+                return;
+            }
+            
+            const data = dailyData[selectedDate];
+            dayReport.classList.remove('hidden');
+            
+            // Resumen del día
+            const reportContent = document.getElementById('dayReportContent');
+            reportContent.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${data.clients.length}</div>
+                        <div class="stat-label">Clientes Atendidos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.totalSales.toFixed(2)}</div>
+                        <div class="stat-label">Total Recaudado</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${Object.values(data.productsSold || {}).reduce((sum, qty) => sum + qty, 0)}</div>
+                        <div class="stat-label">Productos Vendidos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.clients.length > 0 ? (data.totalSales / data.clients.length).toFixed(2) : '0'}</div>
+                        <div class="stat-label">Promedio por Cliente</div>
+                    </div>
+                </div>
+                
+                <h4>🏆 Productos Más Vendidos:</h4>
+                <div class="product-list" style="max-height: 120px;">
+                    ${Object.entries(data.productsSold || {})
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, 5)
+                        .map(([name, qty]) => `
+                            <div class="product-item">
+                                <div class="product-info">
+                                    <div class="product-name">${name}</div>
+                                    <div class="product-details">Vendidos: ${qty} unidades</div>
+                                </div>
+                            </div>
+                        `).join('') || '<p style="text-align: center; color: #666;">No se vendieron productos</p>'}
+                </div>
+            `;
+            
+            // Detalle de clientes
+            const clientsDetail = document.getElementById('clientsDetail');
+            clientsDetail.innerHTML = data.clients.map((client, index) => `
+                <div class="product-item">
+                    <div class="product-info">
+                        <div class="product-name">Cliente #${index + 1} - ${client.timestamp}</div>
+                        <div class="product-details">
+                            ${client.items.map(item => `${item.quantity}x ${item.name}`).join(', ')}
+                            <br><strong>Total: ${client.total.toFixed(2)}</strong>
+                        </div>
+                    </div>
+                </div>
+            `).join('') || '<p style="text-align: center; color: #666;">No hay clientes registrados</p>';
+        }
+
+        function updateQuickStats() {
+            const dates = Object.keys(dailyData);
+            const totalDays = dates.length;
+            
+            if (totalDays === 0) {
+                document.getElementById('totalDays').textContent = '0';
+                document.getElementById('avgSales').textContent = '$0';
+                document.getElementById('bestDay').textContent = '-';
+                document.getElementById('totalHistoric').textContent = '$0';
+                return;
+            }
+            
+            const totalSales = dates.reduce((sum, date) => sum + (dailyData[date].totalSales || 0), 0);
+            const avgSales = totalSales / totalDays;
+            
+            // Encontrar el mejor día
+            let bestDay = '';
+            let bestSales = 0;
+            dates.forEach(date => {
+                if (dailyData[date].totalSales > bestSales) {
+                    bestSales = dailyData[date].totalSales;
+                    bestDay = date;
+                }
+            });
+            
+            document.getElementById('totalDays').textContent = totalDays;
+            document.getElementById('avgSales').textContent = `${avgSales.toFixed(2)}`;
+            document.getElementById('bestDay').textContent = bestDay ? 
+                new Date(bestDay).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }) + 
+                ` (${bestSales.toFixed(2)})` : '-';
+            document.getElementById('totalHistoric').textContent = `${totalSales.toFixed(2)}`;
+        }
+
+        // Registro del Service Worker para PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC53YWl0VW50aWwoc2VsZi5za2lwV2FpdGluZygpKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZnVuY3Rpb24oZXZlbnQpIHsKICBldmVudC5yZXNwb25kV2l0aChmZXRjaChldmVudC5yZXF1ZXN0KSk7Cn0pOw==');
+            });
+        }
+    </script>
+</body>
+</html>
